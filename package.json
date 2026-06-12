@@ -1,0 +1,41 @@
+{
+  "name": "@openedu3d/viewer",
+  "version": "0.1.0",
+  "description": "Reusable Three.js teaching-resource viewer components for OpenEdu3D.",
+  "type": "module",
+  "private": false,
+  "main": "./dist/openedu3d-viewer.umd.cjs",
+  "module": "./dist/openedu3d-viewer.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/openedu3d-viewer.js",
+      "require": "./dist/openedu3d-viewer.umd.cjs"
+    }
+  },
+  "scripts": {
+    "dev": "vite --host 0.0.0.0",
+    "build": "vue-tsc --declaration --emitDeclarationOnly && vite build",
+    "type-check": "vue-tsc --noEmit"
+  },
+  "peerDependencies": {
+    "three": "^0.176.0",
+    "vue": "^3.5.18"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.3",
+    "@types/three": "^0.183.1",
+    "@vitejs/plugin-vue": "^5.2.4",
+    "typescript": "^5.8.3",
+    "vite": "^5.4.19",
+    "vue": "^3.5.18",
+    "vue-tsc": "^2.2.10",
+    "three": "^0.176.0"
+  }
+}
