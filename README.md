@@ -15,7 +15,21 @@ npm ci
 npm run dev
 ```
 
-打开终端打印的地址。示例使用仓库原创的 MIT 心脏示意模型，支持 URL、本地 GLB、创建/修改/删除标注、JSON 保存恢复、课堂展示模式和隐藏侧栏。该模型用于交互演示，不是精确的医学教学资源。
+打开终端打印的地址。默认加载仓库原创的 MIT 心脏示意模型；点击“加载真实心脏模型”可体验 HuBMAP 的真实心脏参考模型。示例支持 URL、本地 GLB、创建/修改/删除标注、JSON 保存恢复、课堂展示模式和隐藏侧栏。
+
+### 看图体验备课与课堂展示
+
+编辑模式：点击模型表面创建观察点，通过侧栏修改名称和课堂说明。
+
+![真实心脏模型的标注编辑界面](https://raw.githubusercontent.com/OpenEdu3D/openedu3d-viewer/main/docs/images/03-annotation-edit.png)
+
+课堂展示模式：保留旋转、缩放、定位和说明，隐藏组件内编辑操作。
+
+![真实心脏模型的课堂展示界面](https://raw.githubusercontent.com/OpenEdu3D/openedu3d-viewer/main/docs/images/04-classroom-present.png)
+
+按 [截图操作教程](./docs/usage-guide.md) 体验导入、创建、编辑、JSON 恢复、隐藏侧栏与 390px 窄屏；也可查看 [真实模型验收记录](./docs/course-model-acceptance.md)。图片来自实际浏览器操作。
+
+截图模型署名：Kristen Browne; Heidi Schlehlein (2022). *3D Reference Organ for Heart, Male v1.2.* HuBMAP，[模型来源](https://doi.org/10.48539/HBM373.VSTV.568)，[CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)。模型原始字节未修改；截图和观察标注用于展示组件操作，具体课程内容需由课程作者审核。原创示意模型不具备医学解剖精度。完整资产说明见 [public/README.md](./public/README.md)。
 
 ## 安装到 Vue 项目
 
@@ -225,4 +239,4 @@ npm run check:package
 
 ## License
 
-[MIT](./LICENSE)。示意资产说明见 [public/README.md](./public/README.md)。原型与 A 方案决策保留在 [prototype/model-annotations](https://github.com/OpenEdu3D/openedu3d-viewer/tree/prototype/model-annotations) 分支，未进入正式发布入口。
+[MIT](./LICENSE)。第三方模型及包含该模型的截图遵循其 CC BY 4.0 署名要求，见 [public/README.md](./public/README.md)。原型与 A 方案决策保留在 [prototype/model-annotations](https://github.com/OpenEdu3D/openedu3d-viewer/tree/prototype/model-annotations) 分支，未进入正式发布入口。

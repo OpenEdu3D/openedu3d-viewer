@@ -36,8 +36,9 @@ function setModel(source: string | null, id = 'heart-demo') {
 <template>
   <main class="demo">
     <h1>OpenEdu3D · 模型教学标注</h1>
-    <p>原创心脏示意模型，用于体验模型导入与三维标注。</p>
-    <div><button @click="setModel(null)">清空模型</button> <button @click="setModel('/missing.glb', 'missing')">加载不存在的模型</button> <button @click="setModel('/heart.glb')">重新载入心脏</button></div>
+    <p>默认是原创心脏示意模型，也可加载真实心脏参考模型，体验模型导入与三维标注。</p>
+    <p v-if="model?.id === 'hra-heart-male-v1.2'" class="demo-credit">课程模型：Kristen Browne; Heidi Schlehlein (2022) · HuBMAP Heart, Male v1.2 · <a href="https://doi.org/10.48539/HBM373.VSTV.568">模型来源</a> · <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a></p>
+    <div><button @click="setModel('/models/hra-heart-male-v1.2.glb', 'hra-heart-male-v1.2')">加载真实心脏模型</button> <button @click="setModel(null)">清空模型</button> <button @click="setModel('/missing.glb', 'missing')">加载不存在的模型</button> <button @click="setModel('/heart.glb')">重新载入心脏</button></div>
     <form class="demo-source" @submit.prevent="setModel(sourceUrl, modelId)"><label>模型 URL<input v-model="sourceUrl" /></label> <label>稳定模型 ID<input v-model="modelId" /></label> <button>加载 URL</button></form>
     <div class="demo-controls"><label><input v-model="mounted" type="checkbox" />挂载组件</label> <label>遮挡标注 <select v-model="occluded" aria-label="遮挡标注"><option value="hide">隐藏</option><option value="fade">淡化</option></select></label> <label><input v-model="present" type="checkbox" />课堂展示模式</label> <label><input v-model="showSidebar" type="checkbox" />显示标注侧栏</label> <button @click="saved = JSON.stringify(annotations)">保存 JSON</button> <button @click="restore">恢复 JSON</button></div>
     <ModelAnnotationViewer v-if="mounted" :occluded="occluded" :mode="present ? 'present' : 'edit'" :show-sidebar="showSidebar" v-model:model="model" v-model:annotations="annotations" @load="onLoad" @error="error = $event" />

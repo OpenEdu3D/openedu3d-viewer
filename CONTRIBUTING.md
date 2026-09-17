@@ -1,8 +1,10 @@
 # 参与开发
 
-使用 Node.js 20.19+ 和 npm。执行 `npm ci`，然后 `npm run dev`，可运行 `examples/App.vue` 的正式组件示例。原创心脏模型位于 `public/heart.glb`。
+使用 Node.js 20.19+ 和 npm。执行 `npm ci`，然后 `npm run dev`，可运行 `examples/App.vue` 的正式组件示例。默认使用 `public/heart.glb` 的原创心脏示意模型；点击“加载真实心脏模型”可切换到 `public/models/hra-heart-male-v1.2.glb` 的 HuBMAP / HRA 参考模型。完整操作见 [截图教程](./docs/usage-guide.md)，相关结果见 [真实模型验收记录](./docs/course-model-acceptance.md)。
 
 `scripts/create-demo-heart.py` 只依赖 Python 3 标准库；按 [示例资产说明](./public/README.md) 的命令可重新生成模型。普通组件开发使用已提交的 GLB，无需运行生成器。更改模型节点结构或几何后，同时更新示例使用的模型版本 ID。
+
+真实参考模型与代码使用不同许可；模型再分发和截图需按资产说明保留 CC BY 4.0 署名及来源。`public/lessons/hra-heart-annotations.json` 是通过真实界面创建的两条观察标注，仅适用于对应模型版本。修改模型后需重新创建或核对锚点，不能把原模型的观察标注直接当作新模型的课程资料。
 
 修改 `src/annotations` 实现通用 GLB 表面标注；公开入口是 `src/index.ts`。保持现有组件导出兼容，模型存储与课程持久化交给宿主。公开 API 或行为变化时同步 README、示例和类型。
 
@@ -19,7 +21,7 @@ npm run check:package
 
 浏览器测试使用公开组件输入、命名 v-model、事件和真实 canvas 操作，避免依赖 Three.js 私有字段或逐像素截图。新增行为优先用一个失败的消费者行为测试引导一个完整实现，再继续下一项。
 
-`npm test` 启动 127.0.0.1:5175；独立消费者验证使用 127.0.0.1:5176，并在临时目录安装依赖。CI 会安装 Chromium 及系统依赖。请保持这些端口可用；测试输出位于 `node_modules/.cache/openedu3d/test-results`。
+`npm test` 启动 127.0.0.1:5175；可通过 `TEST_PORT=5187 npm test` 使用独立端口。独立消费者验证使用 127.0.0.1:5176，并在临时目录安装依赖。CI 会安装 Chromium 及系统依赖。请保持所需端口可用；测试输出位于 `node_modules/.cache/openedu3d/test-results`。
 
 `npm run build` 先生成 JS/CSS，再生成声明，避免 Vite 清空声明目录。`npm pack` 只包含 dist、README、LICENSE 等包元数据，不包含示例资产、原型、测试或仓库内部计划。
 
