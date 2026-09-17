@@ -1,16 +1,11 @@
 import { expect, test } from '@playwright/test';
+import { createSurfaceAnnotation } from './helpers';
 
 test('教师点击模型表面创建标注，宿主获得可保存的锚点数据', async ({ page }) => {
   await page.goto('/');
   await expect(page.locator('#event-log')).toContainText('heart-demo');
   await expect(page.getByRole('button', { name: '添加三维标注', exact: true })).toBeVisible();
-  await page.getByRole('button', { name: '添加三维标注', exact: true }).click();
-  const box = (await page.getByLabel('三维模型交互画布').boundingBox())!;
-  await page.mouse.click(box.x + box.width * 0.5, box.y + box.height * 0.62);
-  const dialog = page.getByRole('dialog');
-  await dialog.getByLabel('标注名称', { exact: true }).fill('心室讲解点');
-  await dialog.getByLabel('课堂说明', { exact: true }).fill('从不同角度观察这个部位。');
-  await dialog.getByRole('button', { name: '确认添加', exact: true }).click();
+  await createSurfaceAnnotation(page, '心室讲解点', '从不同角度观察这个部位。');
   await expect(page.locator('#annotation-data')).toContainText('心室讲解点');
   const data = JSON.parse(await page.locator('#annotation-data').innerText());
   expect(data).toHaveLength(1);
@@ -24,12 +19,7 @@ test('教师点击模型表面创建标注，宿主获得可保存的锚点数�
 test('侧栏编辑、JSON 恢复与只读课堂展示通过公开绑定工作', async ({ page }) => {
   await page.goto('/');
   await expect(page.locator('#event-log')).toContainText('heart-demo');
-  await page.getByRole('button', { name: '添加三维标注', exact: true }).click();
-  const box = (await page.getByLabel('三维模型交互画布').boundingBox())!;
-  await page.mouse.click(box.x + box.width * .5, box.y + box.height * .62);
-  const dialog = page.getByRole('dialog');
-  await dialog.getByLabel('标注名称', { exact: true }).fill('原始名称');
-  await dialog.getByRole('button', { name: '确认添加', exact: true }).click();
+  await createSurfaceAnnotation(page, '原始名称');
   const sidebar = page.getByRole('complementary', { name: '标注侧栏' });
   await sidebar.getByLabel('标注名称', { exact: true }).fill('修改名称');
   await sidebar.getByLabel('课堂说明', { exact: true }).fill('保存这段课程说明');
@@ -56,11 +46,7 @@ test('侧栏编辑、JSON 恢复与只读课堂展示通过公开绑定工作', 
 test('旋转保持锚点，背面默认隐藏且可切换淡化显示', async ({ page }) => {
   await page.goto('/');
   await expect(page.locator('#event-log')).toContainText('heart-demo');
-  await page.getByRole('button', { name: '添加三维标注', exact: true }).click();
-  const box = (await page.getByLabel('三维模型交互画布').boundingBox())!;
-  await page.mouse.click(box.x + box.width * .5, box.y + box.height * .62);
-  await page.getByRole('dialog').getByLabel('标注名称', { exact: true }).fill('表面观察点');
-  await page.getByRole('dialog').getByRole('button', { name: '确认添加', exact: true }).click();
+  const box = await createSurfaceAnnotation(page, '表面观察点');
   const saved = await page.locator('#annotation-data').innerText();
   await expect(page.getByRole('button', { name: '表面观察点', exact: true })).toBeVisible();
   await page.mouse.move(box.x + box.width * .5, box.y + box.height * .4);
@@ -78,11 +64,7 @@ test('旋转保持锚点，背面默认隐藏且可切换淡化显示', async ({
 test('恢复过滤非法数据且不修改宿主输入；同一模型重载仍恢复锚点', async ({ page }) => {
   await page.goto('/');
   await expect(page.locator('#event-log')).toContainText('heart-demo');
-  await page.getByRole('button', { name: '添加三维标注', exact: true }).click();
-  const box = (await page.getByLabel('三维模型交互画布').boundingBox())!;
-  await page.mouse.click(box.x + box.width * .5, box.y + box.height * .62);
-  await page.getByRole('dialog').getByLabel('标注名称', { exact: true }).fill('恢复锚点');
-  await page.getByRole('dialog').getByRole('button', { name: '确认添加', exact: true }).click();
+  await createSurfaceAnnotation(page, '恢复锚点');
   const original = JSON.parse(await page.locator('#annotation-data').innerText())[0];
   const input = [original, original, { ...original, id: 'wrong-model', modelId: 'other' }, { ...original, id: 'bad-path', anchor: { ...original.anchor, nodePath: 'unknown' } }, { ...original, id: 'bad-normal', anchor: { ...original.anchor, normal: [0, 0, 0] } }];
   await page.getByLabel('标注 JSON', { exact: true }).fill(JSON.stringify(input));
@@ -128,11 +110,7 @@ test('桌面网页中的 390px 容器仍可创建和编辑标注', async ({ page
   const canvas = page.getByLabel('三维模型交互画布');
   const sidebar = page.getByRole('complementary', { name: '标注侧栏' });
   await expect.poll(async () => { const c = (await canvas.boundingBox())!, s = (await sidebar.boundingBox())!; return s.y >= c.y + c.height; }).toBe(true);
-  await page.getByRole('button', { name: '添加三维标注', exact: true }).click();
-  const box = (await canvas.boundingBox())!;
-  await page.mouse.click(box.x + box.width * .5, box.y + box.height * .62);
-  await page.getByRole('dialog').getByLabel('标注名称', { exact: true }).fill('窄屏标注');
-  await page.getByRole('dialog').getByRole('button', { name: '确认添加', exact: true }).click();
+  await createSurfaceAnnotation(page, '窄屏标注');
   await sidebar.getByLabel('课堂说明', { exact: true }).fill('仍能编辑');
   await expect(page.locator('#annotation-data')).toContainText('仍能编辑');
   const root = page.getByRole('region', { name: '三维教学展示' });

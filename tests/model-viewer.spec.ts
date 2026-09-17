@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { encodeGlb } from './helpers';
 
 test('开发者通过 Vue 组件加载 GLB 并获得加载完成事件', async ({ page }) => {
   await page.goto('/');
@@ -50,23 +51,11 @@ test('导入动画、压缩及空场景 GLB 会终止编辑并给出格式或有
   const original = await readFile('public/heart.glb');
   const originalJsonLength = original.readUInt32LE(12);
   const originalJson = JSON.parse(original.subarray(20, 20 + originalJsonLength).toString());
-  function glb(document: unknown, tail = Buffer.alloc(0)) {
-    const json = Buffer.from(JSON.stringify(document));
-    const padded = Math.ceil(json.length / 4) * 4;
-    const header = Buffer.alloc(20 + padded, 32);
-    header.writeUInt32LE(0x46546c67, 0);
-    header.writeUInt32LE(2, 4);
-    header.writeUInt32LE(header.length + tail.length, 8);
-    header.writeUInt32LE(padded, 12);
-    header.writeUInt32LE(0x4e4f534a, 16);
-    json.copy(header, 20);
-    return Buffer.concat([header, tail]);
-  }
   const tail = original.subarray(20 + originalJsonLength);
   const unsupported = [
-    { name: 'animated.glb', buffer: glb({ ...originalJson, animations: [{ channels: [], samplers: [] }] }, tail), code: 'unsupported-model', message: '动画' },
-    { name: 'compressed.glb', buffer: glb({ ...originalJson, extensionsUsed: ['KHR_draco_mesh_compression'] }, tail), code: 'unsupported-model', message: '压缩' },
-    { name: 'empty.glb', buffer: glb({ asset: { version: '2.0' }, scene: 0, scenes: [{ nodes: [] }], nodes: [] }), code: 'invalid-model', message: '有效网格' }
+    { name: 'animated.glb', buffer: encodeGlb({ ...originalJson, animations: [{ channels: [], samplers: [] }] }, tail), code: 'unsupported-model', message: '动画' },
+    { name: 'compressed.glb', buffer: encodeGlb({ ...originalJson, extensionsUsed: ['KHR_draco_mesh_compression'] }, tail), code: 'unsupported-model', message: '压缩' },
+    { name: 'empty.glb', buffer: encodeGlb({ asset: { version: '2.0' }, scene: 0, scenes: [{ nodes: [] }], nodes: [] }), code: 'invalid-model', message: '有效网格' }
   ];
   await page.goto('/');
   await expect(page.locator('#event-log')).toContainText('heart-demo');
@@ -151,11 +140,7 @@ test('最新 URL 生效，卸载后迟到请求不会发出加载事件', async 
 });
 
 test('本地 GLB 引用外部资源时给出内嵌资源提示', async ({ page }) => {
-  const json = Buffer.from(JSON.stringify({ asset: { version: '2.0' }, buffers: [{ uri: 'external.bin', byteLength: 8 }] }));
-  const padded = Math.ceil(json.length / 4) * 4;
-  const file = Buffer.alloc(20 + padded, 32);
-  file.writeUInt32LE(0x46546c67, 0); file.writeUInt32LE(2, 4); file.writeUInt32LE(file.length, 8);
-  file.writeUInt32LE(padded, 12); file.writeUInt32LE(0x4e4f534a, 16); json.copy(file, 20);
+  const file = encodeGlb({ asset: { version: '2.0' }, buffers: [{ uri: 'external.bin', byteLength: 8 }] });
   await page.goto('/');
   await expect(page.locator('#event-log')).toContainText('heart-demo');
   await page.getByLabel('选择 GLB 模型').setInputFiles({ name: 'external.glb', mimeType: 'model/gltf-binary', buffer: file });

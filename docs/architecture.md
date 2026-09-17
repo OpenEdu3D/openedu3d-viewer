@@ -26,4 +26,4 @@ HTML 文字和 SVG 引线使用三维位置投影，保持文字正向；射线�
 
 Vite 输出 ES/UMD 和独立 CSS，随后 vue-tsc 输出声明。`tsconfig.build.json` 排除示例，构建不复制 public 资产。包声明 CSS 入口并保留 CSS 副作用。
 
-Playwright 从公开消费者示例验证行为。`scripts/check-package.mjs` 安装实际 tarball 到临时 Vue 消费项目，再检查模块导入、类型、生产构建和浏览器功能。CI 执行相同流程，验证源码开发之外的接入路径。
+Playwright 从公开消费者示例验证行为。`scripts/check-package.mjs` 安装实际 tarball 到临时 Vue 消费项目，再检查模块导入、类型、生产构建和浏览器功能，并提取 README 中完整的 Vue 示例进行消费者类型检查与实际渲染验收。CI 执行相同流程，验证源码开发之外的接入路径。
