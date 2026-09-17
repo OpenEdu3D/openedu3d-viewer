@@ -20,6 +20,7 @@
     }
   },
   "scripts": {
+    "prototype:annotations": "vite --config src/prototype/vite.config.ts --host 127.0.0.1",
     "dev": "vite --host 0.0.0.0",
     "build": "vue-tsc --declaration --emitDeclarationOnly && vite build",
     "type-check": "vue-tsc --noEmit"
